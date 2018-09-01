@@ -23,11 +23,7 @@ var app = app || {};
   Article.loadAll = articleData => {
     articleData.sort((a, b) => (new Date(b.published_on)) - (new Date(a.published_on)))
 
-    let x = articleData.map(articleObject)
-    /* OLD forEach():
-    articleData.forEach(articleObject => Article.all.push(new Article(articleObject)));
-    */
-
+    Article.all = articleData.map(articleObject => new Article(articleObject));
   };
 
   Article.fetchAll = callback => {
@@ -39,15 +35,25 @@ var app = app || {};
   };
 
   Article.numWordsAll = () => {
-    return Article.all.map().reduce()
+    return Article.all.map(article => article.body.split(' ').length).reduce((acc, curr) => acc + curr);
   };
 
   Article.allAuthors = () => {
-    return Article.all.map().reduce();
+    return app.Article.all.map(article => article.author).sort().reduce((acc, cur) => {
+      if (acc.length === 0 || (acc.length - 1) !== cur) {
+        acc.push(cur);
+      }
+      return acc;
+    }, []);
   };
 
   Article.numWordsByAuthor = () => {
-    return Article.allAuthors().map(author => { })
+    return Article.allAuthors().map(author => {
+      let individualAuthor = {};
+      individualAuthor.author = author;
+      individualAuthor.numWords = Article.all.filter(article => article.author === author).map(article => article.body.split(' ').length).reduce((acc, curr) => acc + curr);
+      return individualAuthor;
+    })
   };
 
   Article.truncateTable = callback => {
@@ -94,4 +100,6 @@ var app = app || {};
       .then(callback);
   };
 
-})();
+  module.Article = Article;
+
+})(app);
