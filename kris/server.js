@@ -1,13 +1,13 @@
 'use strict';
 // REVIEW: Check out all of our new arrow function syntax!
+require('dotenv').config();
 
 const pg = require('pg');
 const fs = require('fs');
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const app = express();
-const conString = '';
-const client = new pg.Client(conString);
+const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 client.on('error', err => {
   console.error(err);
